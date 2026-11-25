@@ -5,20 +5,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Unzip project
-        run: |
-          unzip -o GeminiArabicAssistant-Android.zip
-          if [ -d GeminiArabicAssistant-Android ]; then
-            cp -r GeminiArabicAssistant-Android/* .
-          fi
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
-      - name: Build Debug APK
+        with:
+          gradle-version: '8.7'
+      - name: Unzip and Build APK
         run: |
-          chmod +x gradlew || true
+          unzip -o "*.zip"
+          PROJECT_DIR=$(dirname "$(find . -name "settings.gradle*" | head -n 1)")
+          cd "$PROJECT_DIR"
           gradle assembleDebug
       - uses: actions/upload-artifact@v4
         with:
